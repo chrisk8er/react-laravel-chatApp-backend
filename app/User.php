@@ -5,7 +5,8 @@ use Laravel\Passport\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use  App\Model\Channel;
+use App\Model\Channel;
+use App\Model\Message;
 
 class User extends Authenticatable
 {
@@ -29,8 +30,13 @@ class User extends Authenticatable
         }
 
         return false;
-
     }
+
+    public function messages()
+    {
+       return $this->hasMany(Message::class, 'sender_id');
+    }
+
 
     /**
      * The attributes that should be hidden for arrays.

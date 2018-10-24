@@ -20,4 +20,3 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::middleware('auth:api')->get('/chat_list', 'Api\MessageChannelController@chatList');
 Route::middleware('auth:api')->get('/messages/{channelId}', 'Api\MessageChannelController@messages');
 Route::middleware('auth:api')->post('/send_message/{channelId}', 'Api\MessageChannelController@send_message');
-Route::middleware('auth:api')->post('/received_message/{id}', 'Api\MessageChannelController@received_message');

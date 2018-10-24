@@ -1,5 +1,5 @@
 <?php
-
+use App\Broadcasting\ChatChannel;
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -15,13 +15,10 @@ Broadcast::channel('App.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('live.{roomId}', function ($user, $roomId) {
-    return ['id' => $user->id, 'name' => $user->name];
-});
 
-
-Broadcast::channel('chatRoom.{roomId}', function ($user, $roomId) {
-    if ($user->isSameChannel($roomId)) {
-        return ['id' => $user->id, 'name' => $user->name];
-    }
-});
+// Broadcast::channel('chat.{channelID}', function ($user, $channelID) {
+//     if ($user->isSameChannel($channelID)) {
+//         return ['id' => $user->id, 'name' => $user->name];
+//     }
+// });
+Broadcast::channel('chat.{channelID}', ChatChannel::class);

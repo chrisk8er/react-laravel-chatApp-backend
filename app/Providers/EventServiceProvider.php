@@ -20,12 +20,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         'App\Events\MessageSend' => [
             'App\Listeners\MessageSendListener',
-        ],
-
-        'App\Events\MessageRecived' => [
-            'App\Listeners\MessageRecivedListener',
-        ],
-
+        ]
     ];
 
     /**

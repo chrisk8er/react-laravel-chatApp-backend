@@ -8,40 +8,35 @@ use App\Model\Message;
 use App\Model\Channel;
 
 use App\Http\Resources\MessageCollection;
-use App\Http\Resources\ChannelCollection;
 use App\Events\MessageSend;
-use App\Events\MessageRecived;
 use Illuminate\Support\Facades\Storage;
 
-use App\Http\Resources\Message as MessageResource;
-use App\Http\Resources\Channel as ChannelResource;
+use App\Http\Resources\Message as MessageResources;
 
-use App\User;
-use Validator;
 
 class MessageChannelController extends Controller
 {
-    public function chat_list()
+    public function chatList()
     {
 
         $channels = Channel::where('sender_id', auth()->id())->orWhere('receiver_id',auth()->id())->get();
-
         $array_channelsIds = [];
         foreach ($channels as $key => $channel) {
-            array_push($array_channelsIds, $channel->id);
+            $array_channelsIds[] = $channel->id;
         }
 
         $messages = Message::whereIn('channel_id', $array_channelsIds)
                             ->with(['channel.sender','channel.receiver', 'sender'])
                             ->latest()->get();
 
-        $newMessages = new MessageCollection($messages);
+        $newMessages = collect(new MessageCollection($messages));
 
         $newMesssssages = $newMessages->groupBy('channelID');
 
         $allmessages = [];
 
         foreach ($newMesssssages as $key => $allmessage) {
+
             $allmessages[] = $allmessage[0];
         }
 
@@ -52,26 +47,15 @@ class MessageChannelController extends Controller
     public function messages($channelId)
     {
 
-        $messages = Message::where('channel_id', $chatRoom->id)
+        $messages = Message::where('channel_id', $channelId)
                             ->with(['channel.sender','channel.receiver', 'sender'])
                             ->get();
 
         return new MessageCollection($messages);
     }
 
-    public function send_message(Request $r, $channelId)
+    public function send_message($channelID, Request $r)
     {
-        $validator = Validator::make($r->all(),[
-            'userID'           => 'required',
-            'sendNotification' => 'required|boolean'
-        ]);
-
-        if ($validator->fails()) {
-
-            return response()->json(['errors'=>$validator->errors()],400);
-
-        }
-
         if (!$r->message and count($r->images) == 0) {
             return response()->json(['message'=> 'no message or images found'],400);
         }
@@ -88,37 +72,34 @@ class MessageChannelController extends Controller
             'message'      => $r->message,
             'status'       => 1,
             'images'       => $imagesjson,
-            'channel_id'   => $channelId
+            'channel_id'   => $channelID
         ];
 
         $message = auth()->user()->messages()->create($data);
+
         if ($message) {
-            if ($r->sendNotification) {
-                $user = User::where('id', $r->userID)->with('mobileSubscriptions')->first();
-                if ($user) {
-                    $notification = $user->notify(new MessageInbox(auth()->user(), $order, $message, $chatRoom, $user->mobileSubscriptions));
-                }
-            }
-            broadcast(new MessageSend($order, new MessageResources($message), auth()->id(), $r->userID, $chatRoom))->toOthers();
+            broadcast(new MessageSend(new MessageResources($message), $channelID))->toOthers();
         }
+
         return new MessageResources($message);
     }
 
-    public function received_message($id, Request $r)
+    private function storeImage($images)
     {
-
-        $message = Message::where('id', $id)->first();
-
-        if (auth()->id() != $message->sender_id and !$r->seen) {
-            return response()->json(['message'=> 'Not allow', 'samecurrent'=> false],400);
+        $images_url = [];
+        foreach ($images as $key =>$file_data) {
+            $file_name = 'messages/image/image_'.time().'-'.$key.'.png';
+            @list($type, $file_data) = explode(';', $file_data);
+            @list(, $file_data)  = explode(',', $file_data);
+            if($file_data!=""){
+                $path = Storage::put($file_name,base64_decode($file_data));
+            }else {
+                $path = null;
+            }
+            array_push($images_url, $file_name);
         }
 
-        if (!$message) {
-            return response()->json(['message'=> 'no result found.'],400);
-        }
-
-        event(new MessageRecived($message, $r->status, $r->seen, $r->notificationId));
-        return response()->json(['message'=> 'Recived'],200);
+        return  $images_url;
     }
 
 }

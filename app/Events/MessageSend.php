@@ -13,15 +13,21 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 class MessageSend
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $message, $channelID;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($message, $channelID)
     {
-        //
+        $this->message    = $message;
+        $this->channelID   = $channelID;
+    }
+
+    public function broadcastWith()
+    {
+        return ['data' => $this->message];
     }
 
     /**
@@ -31,6 +37,6 @@ class MessageSend
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('channel-name');
+        return new PrivateChannel('chatRoom.'.$this->channelID);
     }
 }

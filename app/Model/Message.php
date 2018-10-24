@@ -9,10 +9,8 @@ use App\User;
 class Message extends Model
 {
     protected $fillable = [
-        'sender_id', 'message', 'status', 'read_at', 'images', 'channel_id'
+        'sender_id', 'message', 'status','images', 'channel_id'
     ];
-
-    protected $dates = ['read_at'];
 
     public function channel()
     {

@@ -37,9 +37,13 @@ class Message extends JsonResource
 
         return [
             'created_at'         => $this->created_at,
-            'read_at'            => $this->read_at,
             'message'            => $this->message,
             'images'             => $new_images,
+            'userKey'            => strtoupper(str_split($this->sender->name)[0]),
+            'firstKey'           => strtoupper(str_split($user->name)[0]),
+            'myFirstKey'         => strtoupper(str_split(auth()->user()->name)[0]),
+            'myId'               => auth()->id(),
+            'myName'             => title_case(auth()->user()->name),
             'otherUserName'      => $otherUserName,
             'isMe'               => $this->sender_id == $userID ? true: false,
             'channelID'          => $this->channel_id

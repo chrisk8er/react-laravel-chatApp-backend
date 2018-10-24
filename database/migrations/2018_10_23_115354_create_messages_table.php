@@ -20,7 +20,6 @@ class CreateMessagesTable extends Migration
             $table->text('message')->nullable();
             $table->text('images')->nullable();
             $table->boolean('status')->default(1);
-            $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });
     }
