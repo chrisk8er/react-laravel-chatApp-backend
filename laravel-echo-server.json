@@ -1,5 +1,5 @@
 {
-	"authHost": "http://reactblog.test",
+	"authHost": "http://appblog.192.168.2.102.nip.io",
 	"authEndpoint": "/broadcasting/auth",
 	"clients": [
 		{

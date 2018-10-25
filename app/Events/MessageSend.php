@@ -9,8 +9,9 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class MessageSend
+class MessageSend implements ShouldQueue, ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $message, $channelID;
@@ -37,6 +38,6 @@ class MessageSend
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('chatRoom.'.$this->channelID);
+        return new PrivateChannel('chat.'.$this->channelID);
     }
 }

@@ -21,16 +21,6 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
-    public function isSameChannel($channelId)
-    {
-        $channel = Channel::where('id', $channelId)->first();
-        $userIds = [$channel->sender_id, $channel->receiver_id];
-        if (in_array(auth()->id(), $userIds)) {
-            return true;
-        }
-
-        return false;
-    }
 
     public function messages()
     {

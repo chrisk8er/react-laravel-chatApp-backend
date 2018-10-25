@@ -43,6 +43,7 @@ class Message extends JsonResource
             'firstKey'           => strtoupper(str_split($user->name)[0]),
             'myFirstKey'         => strtoupper(str_split(auth()->user()->name)[0]),
             'myId'               => auth()->id(),
+            'sender_id'          => $this->sender_id,
             'myName'             => title_case(auth()->user()->name),
             'otherUserName'      => $otherUserName,
             'isMe'               => $this->sender_id == $userID ? true: false,

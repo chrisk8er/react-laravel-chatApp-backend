@@ -2,8 +2,8 @@
 
 namespace App\Broadcasting;
 
+use App\Model\Channel;
 use App\User;
-
 class Chat
 {
     /**
@@ -22,8 +22,14 @@ class Chat
      * @param  \App\User  $user
      * @return array|bool
      */
-    public function join(User $user)
+    public function join(User $user, Channel $channel)
     {
-        return true;
+
+        $userIds = [$channel->sender_id, $channel->receiver_id];
+        if (in_array($user->id, $userIds)) {
+            return true;
+        }
+
+        return false;
     }
 }
