@@ -72,10 +72,12 @@ class MessageChannelController extends Controller
             'message'      => $r->message,
             'status'       => 1,
             'images'       => $imagesjson,
-            'channel_id'   => $channelID
+            'channel_id'   => $channelID,
+            'sender_id'    => auth()->id()
         ];
 
-        $message = auth()->user()->messages()->create($data);
+        $message =Message::create($data);
+        // auth()->user()->messages()->create($data);
 
         if ($message) {
             broadcast(new MessageSend(new MessageResources($message), $channelID))->toOthers();

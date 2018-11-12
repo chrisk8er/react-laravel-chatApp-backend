@@ -23,7 +23,7 @@ class MessageSend implements ShouldQueue, ShouldBroadcast
     public function __construct($message, $channelID)
     {
         $this->message    = $message;
-        $this->channelID   = $channelID;
+        $this->channelID  = $channelID;
     }
 
     public function broadcastWith()
